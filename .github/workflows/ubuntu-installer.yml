@@ -1,0 +1,60 @@
+name: Create Ubuntu Installer
+on: [push]
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Setup JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: Setup Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.12.7
+    - name: Set up NodeJS
+      uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+    - name: Set up Ballerina
+      run: |
+        wget https://product-dist.ballerina.io/downloads/1.0.3/ballerina-linux-installer-x64-1.0.3.deb
+        sudo dpkg -i ballerina-linux-installer-x64-1.0.3.deb
+
+    - name: Check out code
+      uses: actions/checkout@v1
+      with:
+        path: go/src/cellery.io/cellery 
+
+    - name: Cache M2 repo
+      uses: actions/cache@v1
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: Cache node modules
+      uses: actions/cache@v1
+      with:
+        path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+      
+    - name: Create Installer
+      run: make build-ubuntu-installer
+      env:
+        GOPATH: /home/runner/work/cellery/go/
+
+    - name: Prepare Installers Directory
+      run: |
+        mkdir -p build/installer
+        cp installers/ubuntu-x64/target/cellery-ubuntu-x64-*.deb build/installer/
+    - name: Archive Artifacts
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: ubuntu-installer
+        path: build/installer
