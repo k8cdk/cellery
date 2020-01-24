@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CELLERY_VERSION=__CELLERY_VERSION__
+CELLERY_VERSION=0.7.0-SNAPSHOT
 CELLERY_VERSION_NUM="${CELLERY_VERSION/-SNAPSHOT/}"
 if [ $1 = 'remove' ] && [ -L /usr/local/bin/cellery ]
 then

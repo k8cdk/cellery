@@ -49,7 +49,7 @@ Note `CELLERY_HUB_ORG` is your organization name in [Cellery hub](https://hub.ce
     $ cellery build hello-world-cell.bal <CELLERY_HUB_ORG>/hello-world-cell:1.0.0
     ✔ Creating temporary executable main bal file
     Compiling source
-        celleryio/pet_be:0.6.0
+        celleryio/pet_be:0.7.0
 
     Creating balos
         target/balo/pet_be-2019r3-any-0.1.0.balo
